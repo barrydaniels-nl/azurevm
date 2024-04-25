@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# coding: utf-8
+import subprocess
+import psycopg2
+import time
+
+DATABASE_NAME = 'mdbdataservices'
+DATABASE_USER = 'EM4W-DATA-databaseaadadmin-ont'
+DATABASE_PASSWORD = ''
+DATABASE_HOST = 'dev-bbn1-dso-dbhost.postgres.database.azure.com'
+DATABASE_PORT = '5432'
+
+
+def generate_db_token():
+    start_time = time.time()
+    # Replace 'your-azure-cli-command-here' with the actual Azure CLI command
+    command = "az account get-access-token --resource-type oss-rdbms"
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    if process.returncode != 0:
+        print(f"Error generating token: {stderr.decode()}")
+        return None, 0
+    elapsed_time = time.time() - start_time
+    # Extract the token from the command output as needed
+    token = stdout.decode().strip()  # Simplified for illustration; parse as needed
+    return token, elapsed_time
+
+def connect_to_db(token):
+    start_time = time.time()
+    conn_string = "dbname='{DATABASE_NAME}' user='{DATABASE_USER}' host='{DATABASE_HOST}' password='{DATABASE_PASSWORD}'"
+    try:
+        conn = psycopg2.connect(conn_string)
+        elapsed_time = time.time() - start_time
+        return conn, elapsed_time
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        return None, 0
+
+def execute_query(conn):
+    start_time = time.time()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT * FROM dataset_datasets")
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+        cur.close()
+        elapsed_time = time.time() - start_time
+        return elapsed_time
+    except Exception as e:
+        print(f"Query execution failed: {e}")
+        return 0
+
+def disconnect_db(conn):
+    start_time = time.time()
+    conn.close()
+    elapsed_time = time.time() - start_time
+    return elapsed_time
+
+def main():
+    token, token_time = generate_db_token()
+    if token:
+        print(f"Token generated in {token_time} seconds.")
+        conn, connect_time = connect_to_db(token)
+        if conn:
+            print(f"Connected to database in {connect_time} seconds.")
+            query_time = execute_query(conn)
+            print(f"Query executed in {query_time} seconds.")
+            disconnect_time = disconnect_db(conn)
+            print(f"Disconnected from database in {disconnect_time} seconds.")
+
+if __name__ == "__main__":
+    main()

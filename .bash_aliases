@@ -1,13 +1,21 @@
-alias k=kubectl
-alias kp="kubectl run temp-shell-pod  --rm -it --image bretfisher/netshoot -- bash"
-alias ktx="kubectx"
-alias kns="kubens"
-alias ktl="kubetail"
-alias azl="az login --use-device-code"
-alias azs="az account set --subscription 4a7aa471-58a1-4b1c-88e9-c9025ca5ee57"
-alias aksl="az aks get-credentials --resource-group dev-bbn1-rg --name dev-bbn1-blue-aks"
-alias azh="cat ~/.bash_aliases"
-alias podlist="kubectl get pods -n dso-api -o json | jq '.items[] | .metadata.name'"
-alias pods="kubectl get pods -n dso-api -o wide"
-alias dsologs='kubectl logs -l app=dso-api -n dso-api --max-log-requests 50 -f'
+alias aksl='az aks get-credentials --resource-group dev-bbn1-rg --name dev-bbn1-blue-aks --admin'
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias azh='cat ~/.bash_aliases'
+alias azl='az login --use-device-code'
+alias azs='az account set --subscription 4a7aa471-58a1-4b1c-88e9-c9025ca5ee57'
+alias dsologs='kubectl logs -l app=dso-api -n dso-api --max-log-requests 50 -f | grep -v "RuntimeWarning: Model" | grep -v "apps.register_model"'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias k='kubectl'
+alias kns='kubens'
+alias kp='kubectl run temp-shell-pod  --rm -it --image bretfisher/netshoot -- bash'
+alias ktl='kubetail'
+alias ktx='kubectx'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+alias podlist='kubectl get pods -n dso-api -o json | jq '\''.items[] | .metadata.name'\'''
+alias pods='kubectl get pods -n dso-api -o wide'
 alias reload='kubectl rollout restart deployment dso-api -n dso-api'
